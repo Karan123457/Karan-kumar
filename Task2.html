@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A modern responsive contact form with live validation">
+    <title>Advanced Contact Form</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        form {
+            background: #fff;
+            color: #333;
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 1s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #203a43;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #203a43;
+            box-shadow: 0 0 8px rgba(32, 58, 67, 0.5);
+            outline: none;
+        }
+        .form-group.success input,
+        .form-group.success textarea {
+            border-color: #4caf50;
+        }
+        .form-group.error input,
+        .form-group.error textarea {
+            border-color: #e63946;
+        }
+        .form-group .feedback {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #e63946;
+        }
+        .form-group.success .feedback {
+            color: #4caf50;
+        }
+        button {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background: #203a43;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #2c5364;
+        }
+        @media (max-width: 600px) {
+            form {
+                padding: 20px;
+            }
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form id="contactForm" aria-labelledby="formTitle">
+        <h2 id="formTitle">Contact Us</h2>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" aria-required="true" />
+            <small class="feedback"></small>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" aria-required="true" />
+            <small class="feedback"></small>
+        </div>
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Your Message" rows="4" aria-required="true"></textarea>
+            <small class="feedback"></small>
+        </div>
+        <button type="submit">Send Message</button>
+    </form>
+
+    <script>
+        // Modern Form Validation with ES6
+        const form = document.getElementById('contactForm');
+        const inputs = Array.from(form.querySelectorAll('input, textarea'));
+
+        // Helper function for validation
+        const validateField = (input) => {
+            const value = input.value.trim();
+            const formGroup = input.parentElement;
+            const feedback = formGroup.querySelector('.feedback');
+            let isValid = false;
+
+            if (input.id === 'name') {
+                isValid = value.length >= 3;
+                feedback.textContent = isValid ? '' : 'Name must be at least 3 characters.';
+            } else if (input.id === 'email') {
+                isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                feedback.textContent = isValid ? '' : 'Enter a valid email address.';
+            } else if (input.id === 'message') {
+                isValid = value.length >= 10;
+                feedback.textContent = isValid ? '' : 'Message must be at least 10 characters.';
+            }
+
+            if (isValid) {
+                formGroup.classList.add('success');
+                formGroup.classList.remove('error');
+            } else {
+                formGroup.classList.add('error');
+                formGroup.classList.remove('success');
+            }
+
+            return isValid;
+        };
+
+        // Live validation on blur
+        inputs.forEach((input) => {
+            input.addEventListener('blur', () => validateField(input));
+        });
+
+        // Submit validation
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const isValid = inputs.every((input) => validateField(input));
+            if (isValid) {
+                alert('Your message has been sent successfully! 🎉');
+                form.reset();
+                inputs.forEach((input) => {
+                    const formGroup = input.parentElement;
+                    formGroup.classList.remove('success', 'error');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
